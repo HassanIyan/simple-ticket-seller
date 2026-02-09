@@ -10,11 +10,12 @@ export async function POST(req: NextRequest) {
     const buyerName = formData.get('buyerName') as string
     const buyerEmail = formData.get('buyerEmail') as string
     const buyerPhone = (formData.get('buyerPhone') as string) || ''
+    const category = formData.get('category') as string
     const quantity = Number(formData.get('quantity'))
     const totalPrice = Number(formData.get('totalPrice'))
     const bankSlip = formData.get('bankTransferSlip') as File
 
-    if (!buyerName || !buyerEmail || !quantity || !totalPrice || !bankSlip) {
+    if (!buyerName || !buyerEmail || !category || !quantity || !totalPrice || !bankSlip) {
       return Response.json({ error: 'Missing required fields' }, { status: 400 })
     }
 
@@ -43,6 +44,7 @@ export async function POST(req: NextRequest) {
         buyerName,
         buyerEmail,
         buyerPhone,
+        category,
         quantity,
         totalPrice,
         status: 'pending',

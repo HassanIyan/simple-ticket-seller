@@ -20,7 +20,7 @@ export default async function HomePage() {
   }
 
   const featuredImage = homePage?.featuredImage as MediaType | undefined
-  const ticketPrice = homePage?.ticketPrice ?? 0
+  const categories = (homePage?.ticketCategories ?? []) as { name: string; price: number }[]
   const currency = homePage?.currency ?? 'USD'
   const buttonLabel = homePage?.ticketLabel ?? 'Buy Tickets'
 
@@ -50,12 +50,8 @@ export default async function HomePage() {
           <h1>Welcome to our event!</h1>
         )}
 
-        {ticketPrice > 0 && (
-          <BuyTicketSection
-            ticketPrice={ticketPrice}
-            currency={currency}
-            buttonLabel={buttonLabel}
-          />
+        {categories.length > 0 && (
+          <BuyTicketSection categories={categories} currency={currency} buttonLabel={buttonLabel} />
         )}
       </div>
     </div>

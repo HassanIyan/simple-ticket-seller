@@ -173,6 +173,10 @@ export interface Ticket {
   buyerName: string;
   buyerEmail: string;
   buyerPhone?: string | null;
+  /**
+   * Ticket category (e.g. First Row, Second Row)
+   */
+  category: string;
   quantity: number;
   totalPrice: number;
   status: 'pending' | 'verified' | 'rejected';
@@ -313,6 +317,7 @@ export interface TicketsSelect<T extends boolean = true> {
   buyerName?: T;
   buyerEmail?: T;
   buyerPhone?: T;
+  category?: T;
   quantity?: T;
   totalPrice?: T;
   status?: T;
@@ -384,9 +389,16 @@ export interface HomePage {
     [k: string]: unknown;
   };
   /**
-   * Price per ticket (in your currency)
+   * Add different ticket categories with their prices
    */
-  ticketPrice: number;
+  ticketCategories: {
+    /**
+     * e.g. First Row, Second Row, General
+     */
+    name: string;
+    price: number;
+    id?: string | null;
+  }[];
   /**
    * Label for the buy ticket button
    */
@@ -405,7 +417,13 @@ export interface HomePage {
 export interface HomePageSelect<T extends boolean = true> {
   featuredImage?: T;
   content?: T;
-  ticketPrice?: T;
+  ticketCategories?:
+    | T
+    | {
+        name?: T;
+        price?: T;
+        id?: T;
+      };
   ticketLabel?: T;
   currency?: T;
   updatedAt?: T;

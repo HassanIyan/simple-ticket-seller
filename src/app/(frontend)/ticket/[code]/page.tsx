@@ -81,6 +81,10 @@ export default async function TicketPage({ params }: { params: Promise<{ code: s
             <span style={styles.value}>{ticket.buyerEmail}</span>
           </div>
           <div style={styles.row}>
+            <span style={styles.label}>Category</span>
+            <span style={styles.value}>{ticket.category}</span>
+          </div>
+          <div style={styles.row}>
             <span style={styles.label}>Quantity</span>
             <span style={styles.value}>{ticket.quantity}</span>
           </div>

@@ -19,13 +19,33 @@ export const HomePage: GlobalConfig = {
       required: true,
     },
     {
-      name: 'ticketPrice',
-      type: 'number',
+      name: 'ticketCategories',
+      type: 'array',
       required: true,
-      min: 0,
-      admin: {
-        description: 'Price per ticket (in your currency)',
+      minRows: 1,
+      labels: {
+        singular: 'Ticket Category',
+        plural: 'Ticket Categories',
       },
+      admin: {
+        description: 'Add different ticket categories with their prices',
+      },
+      fields: [
+        {
+          name: 'name',
+          type: 'text',
+          required: true,
+          admin: {
+            description: 'e.g. First Row, Second Row, General',
+          },
+        },
+        {
+          name: 'price',
+          type: 'number',
+          required: true,
+          min: 0,
+        },
+      ],
     },
     {
       name: 'ticketLabel',

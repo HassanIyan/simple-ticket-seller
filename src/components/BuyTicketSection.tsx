@@ -1,14 +1,20 @@
 'use client'
 import React, { useState, useCallback } from 'react'
 
+interface TicketCategory {
+  name: string
+  price: number
+}
+
 interface BuyTicketSectionProps {
-  ticketPrice: number
+  categories: TicketCategory[]
   currency: string
   buttonLabel: string
 }
 
-export function BuyTicketSection({ ticketPrice, currency, buttonLabel }: BuyTicketSectionProps) {
+export function BuyTicketSection({ categories, currency, buttonLabel }: BuyTicketSectionProps) {
   const [showPurchase, setShowPurchase] = useState(false)
+  const [selectedCategory, setSelectedCategory] = useState(0)
   const [quantity, setQuantity] = useState(1)
   const [buyerName, setBuyerName] = useState('')
   const [buyerEmail, setBuyerEmail] = useState('')
@@ -22,7 +28,8 @@ export function BuyTicketSection({ ticketPrice, currency, buttonLabel }: BuyTick
     ticketCode?: string
   } | null>(null)
 
-  const totalPrice = ticketPrice * quantity
+  const currentCategory = categories[selectedCategory]
+  const totalPrice = currentCategory.price * quantity
 
   const handleSubmit = useCallback(
     async (e: React.FormEvent) => {
@@ -36,6 +43,7 @@ export function BuyTicketSection({ ticketPrice, currency, buttonLabel }: BuyTick
       formData.append('buyerName', buyerName)
       formData.append('buyerEmail', buyerEmail)
       formData.append('buyerPhone', buyerPhone)
+      formData.append('category', currentCategory.name)
       formData.append('quantity', String(quantity))
       formData.append('totalPrice', String(totalPrice))
       formData.append('bankTransferSlip', bankSlip)
@@ -54,7 +62,7 @@ export function BuyTicketSection({ ticketPrice, currency, buttonLabel }: BuyTick
         setSubmitting(false)
       }
     },
-    [bankSlip, buyerName, buyerEmail, buyerPhone, quantity, totalPrice],
+    [bankSlip, buyerName, buyerEmail, buyerPhone, quantity, totalPrice, currentCategory],
   )
 
   // Redirect to ticket page on success
@@ -82,11 +90,30 @@ export function BuyTicketSection({ ticketPrice, currency, buttonLabel }: BuyTick
     <div style={styles.purchaseCard}>
       <h2 style={styles.purchaseTitle}>Purchase Tickets</h2>
 
-      <div style={styles.priceDisplay}>
-        <span style={styles.priceLabel}>Price per ticket</span>
-        <span style={styles.priceValue}>
-          {currency} {ticketPrice.toLocaleString()}
-        </span>
+      <div style={styles.field}>
+        <label style={styles.label}>Select Category</label>
+        <div style={styles.categoryList}>
+          {categories.map((cat, i) => (
+            <button
+              key={i}
+              type="button"
+              onClick={() => {
+                setSelectedCategory(i)
+                setQuantity(1)
+              }}
+              style={{
+                ...styles.categoryItem,
+                borderColor: selectedCategory === i ? '#111827' : '#e5e7eb',
+                background: selectedCategory === i ? '#f9fafb' : '#fff',
+              }}
+            >
+              <span style={styles.categoryName}>{cat.name}</span>
+              <span style={styles.categoryPrice}>
+                {currency} {cat.price.toLocaleString()}
+              </span>
+            </button>
+          ))}
+        </div>
       </div>
 
       <div style={styles.quantitySection}>
@@ -214,23 +241,29 @@ const styles: Record<string, React.CSSProperties> = {
     textAlign: 'center' as const,
     color: '#111827',
   },
-  priceDisplay: {
+  categoryList: {
+    display: 'flex',
+    flexDirection: 'column' as const,
+    gap: '8px',
+  },
+  categoryItem: {
     display: 'flex',
     justifyContent: 'space-between',
     alignItems: 'center',
     padding: '12px 16px',
-    background: '#f9fafb',
     borderRadius: '8px',
-    marginBottom: '16px',
-  },
-  priceLabel: {
-    color: '#6b7280',
+    border: '2px solid #e5e7eb',
+    cursor: 'pointer',
+    transition: 'border-color 0.15s',
     fontSize: '14px',
   },
-  priceValue: {
-    fontWeight: '600',
-    fontSize: '16px',
+  categoryName: {
+    fontWeight: '500',
     color: '#111827',
+  },
+  categoryPrice: {
+    fontWeight: '600',
+    color: '#374151',
   },
   quantitySection: {
     display: 'flex',

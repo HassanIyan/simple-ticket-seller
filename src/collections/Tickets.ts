@@ -4,7 +4,15 @@ export const Tickets: CollectionConfig = {
   slug: 'tickets',
   admin: {
     useAsTitle: 'buyerName',
-    defaultColumns: ['buyerName', 'buyerEmail', 'quantity', 'totalPrice', 'status', 'createdAt'],
+    defaultColumns: [
+      'buyerName',
+      'buyerEmail',
+      'category',
+      'quantity',
+      'totalPrice',
+      'status',
+      'createdAt',
+    ],
   },
   access: {
     read: () => true, // Public can read tickets (by ticketCode link)
@@ -26,6 +34,14 @@ export const Tickets: CollectionConfig = {
     {
       name: 'buyerPhone',
       type: 'text',
+    },
+    {
+      name: 'category',
+      type: 'text',
+      required: true,
+      admin: {
+        description: 'Ticket category (e.g. First Row, Second Row)',
+      },
     },
     {
       name: 'quantity',
