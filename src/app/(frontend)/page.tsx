@@ -20,9 +20,29 @@ export default async function HomePage() {
   }
 
   const featuredImage = homePage?.featuredImage as MediaType | undefined
-  const categories = (homePage?.ticketCategories ?? []) as { name: string; price: number }[]
+  const rawCategories = (homePage?.ticketCategories ?? []) as {
+    name: string
+    price: number
+    limit: number
+  }[]
   const currency = homePage?.currency ?? 'USD'
   const buttonLabel = homePage?.ticketLabel ?? 'Buy Tickets'
+
+  // Compute remaining tickets per category
+  const categories = await Promise.all(
+    rawCategories.map(async (cat) => {
+      const { docs } = await payload.find({
+        collection: 'tickets',
+        where: {
+          category: { equals: cat.name },
+          status: { in: ['pending', 'verified'] },
+        },
+        limit: 0,
+      })
+      const sold = docs.reduce((sum, t) => sum + (t.quantity ?? 0), 0)
+      return { ...cat, remaining: Math.max(0, cat.limit - sold) }
+    }),
+  )
 
   return (
     <div className="home">

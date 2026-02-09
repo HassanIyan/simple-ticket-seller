@@ -397,6 +397,10 @@ export interface HomePage {
      */
     name: string;
     price: number;
+    /**
+     * Maximum number of tickets available for this category
+     */
+    limit: number;
     id?: string | null;
   }[];
   /**
@@ -422,6 +426,7 @@ export interface HomePageSelect<T extends boolean = true> {
     | {
         name?: T;
         price?: T;
+        limit?: T;
         id?: T;
       };
   ticketLabel?: T;

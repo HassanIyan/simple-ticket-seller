@@ -21,6 +21,41 @@ export async function POST(req: NextRequest) {
 
     const payload = await getPayload({ config: await config })
 
+    // Check ticket limit
+    const homePage = await payload.findGlobal({ slug: 'home-page' })
+    const ticketCategories = (homePage.ticketCategories ?? []) as {
+      name: string
+      price: number
+      limit: number
+    }[]
+    const categoryConfig = ticketCategories.find((c) => c.name === category)
+    if (!categoryConfig) {
+      return Response.json({ error: 'Invalid ticket category' }, { status: 400 })
+    }
+
+    const { docs: existingTickets } = await payload.find({
+      collection: 'tickets',
+      where: {
+        category: { equals: category },
+        status: { in: ['pending', 'verified'] },
+      },
+      limit: 0,
+    })
+    const sold = existingTickets.reduce((sum, t) => sum + (t.quantity ?? 0), 0)
+    const remaining = categoryConfig.limit - sold
+
+    if (quantity > remaining) {
+      return Response.json(
+        {
+          error:
+            remaining <= 0
+              ? 'This ticket category is sold out'
+              : `Only ${remaining} ticket(s) remaining for this category`,
+        },
+        { status: 400 },
+      )
+    }
+
     // Upload the bank slip to the media collection
     const uploadedMedia = await payload.create({
       collection: 'media',

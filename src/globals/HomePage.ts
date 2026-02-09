@@ -45,6 +45,16 @@ export const HomePage: GlobalConfig = {
           required: true,
           min: 0,
         },
+        {
+          name: 'limit',
+          type: 'number',
+          required: true,
+          defaultValue: 0,
+          min: 0,
+          admin: {
+            description: 'Maximum number of tickets available for this category',
+          },
+        },
       ],
     },
     {

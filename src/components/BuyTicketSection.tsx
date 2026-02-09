@@ -4,6 +4,7 @@ import React, { useState, useCallback } from 'react'
 interface TicketCategory {
   name: string
   price: number
+  remaining: number
 }
 
 interface BuyTicketSectionProps {
@@ -29,6 +30,8 @@ export function BuyTicketSection({ categories, currency, buttonLabel }: BuyTicke
   } | null>(null)
 
   const currentCategory = categories[selectedCategory]
+  const maxQty = currentCategory.remaining
+  const isSoldOut = maxQty <= 0
   const totalPrice = currentCategory.price * quantity
 
   const handleSubmit = useCallback(
@@ -93,26 +96,41 @@ export function BuyTicketSection({ categories, currency, buttonLabel }: BuyTicke
       <div style={styles.field}>
         <label style={styles.label}>Select Category</label>
         <div style={styles.categoryList}>
-          {categories.map((cat, i) => (
-            <button
-              key={i}
-              type="button"
-              onClick={() => {
-                setSelectedCategory(i)
-                setQuantity(1)
-              }}
-              style={{
-                ...styles.categoryItem,
-                borderColor: selectedCategory === i ? '#111827' : '#e5e7eb',
-                background: selectedCategory === i ? '#f9fafb' : '#fff',
-              }}
-            >
-              <span style={styles.categoryName}>{cat.name}</span>
-              <span style={styles.categoryPrice}>
-                {currency} {cat.price.toLocaleString()}
-              </span>
-            </button>
-          ))}
+          {categories.map((cat, i) => {
+            const soldOut = cat.remaining <= 0
+            return (
+              <button
+                key={i}
+                type="button"
+                onClick={() => {
+                  if (!soldOut) {
+                    setSelectedCategory(i)
+                    setQuantity(1)
+                  }
+                }}
+                style={{
+                  ...styles.categoryItem,
+                  borderColor: soldOut ? '#e5e7eb' : selectedCategory === i ? '#111827' : '#e5e7eb',
+                  background: soldOut ? '#f3f4f6' : selectedCategory === i ? '#f9fafb' : '#fff',
+                  opacity: soldOut ? 0.6 : 1,
+                  cursor: soldOut ? 'not-allowed' : 'pointer',
+                }}
+                disabled={soldOut}
+              >
+                <div>
+                  <span style={styles.categoryName}>{cat.name}</span>
+                  {soldOut ? (
+                    <span style={styles.soldOutBadge}>Sold Out</span>
+                  ) : (
+                    <span style={styles.remainingText}>{cat.remaining} left</span>
+                  )}
+                </div>
+                <span style={styles.categoryPrice}>
+                  {currency} {cat.price.toLocaleString()}
+                </span>
+              </button>
+            )
+          })}
         </div>
       </div>
 
@@ -127,7 +145,16 @@ export function BuyTicketSection({ categories, currency, buttonLabel }: BuyTicke
             −
           </button>
           <span style={styles.qtyValue}>{quantity}</span>
-          <button style={styles.qtyBtn} onClick={() => setQuantity(quantity + 1)} type="button">
+          <button
+            style={{
+              ...styles.qtyBtn,
+              opacity: quantity >= maxQty ? 0.4 : 1,
+              cursor: quantity >= maxQty ? 'not-allowed' : 'pointer',
+            }}
+            onClick={() => setQuantity(Math.min(maxQty, quantity + 1))}
+            type="button"
+            disabled={quantity >= maxQty}
+          >
             +
           </button>
         </div>
@@ -198,8 +225,8 @@ export function BuyTicketSection({ categories, currency, buttonLabel }: BuyTicke
 
         <button
           type="submit"
-          style={{ ...styles.submitBtn, opacity: submitting ? 0.6 : 1 }}
-          disabled={submitting}
+          style={{ ...styles.submitBtn, opacity: submitting || isSoldOut ? 0.6 : 1 }}
+          disabled={submitting || isSoldOut}
         >
           {submitting ? 'Processing...' : `Pay ${currency} ${totalPrice.toLocaleString()} — Submit`}
         </button>
@@ -264,6 +291,23 @@ const styles: Record<string, React.CSSProperties> = {
   categoryPrice: {
     fontWeight: '600',
     color: '#374151',
+  },
+  soldOutBadge: {
+    display: 'inline-block',
+    marginLeft: '8px',
+    fontSize: '11px',
+    fontWeight: '600',
+    color: '#dc2626',
+    background: '#fef2f2',
+    border: '1px solid #fecaca',
+    padding: '1px 6px',
+    borderRadius: '4px',
+  },
+  remainingText: {
+    display: 'inline-block',
+    marginLeft: '8px',
+    fontSize: '11px',
+    color: '#6b7280',
   },
   quantitySection: {
     display: 'flex',
