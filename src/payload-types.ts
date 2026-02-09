@@ -411,6 +411,14 @@ export interface HomePage {
    * Currency code (e.g. USD, EUR, PKR)
    */
   currency?: string | null;
+  /**
+   * Bank account holder name displayed to buyers
+   */
+  bankAccountName?: string | null;
+  /**
+   * Bank account number displayed to buyers for transfer
+   */
+  bankAccountNumber?: string | null;
   updatedAt?: string | null;
   createdAt?: string | null;
 }
@@ -431,6 +439,8 @@ export interface HomePageSelect<T extends boolean = true> {
       };
   ticketLabel?: T;
   currency?: T;
+  bankAccountName?: T;
+  bankAccountNumber?: T;
   updatedAt?: T;
   createdAt?: T;
   globalType?: T;

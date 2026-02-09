@@ -11,9 +11,22 @@ interface BuyTicketSectionProps {
   categories: TicketCategory[]
   currency: string
   buttonLabel: string
+  bankAccountName?: string
+  bankAccountNumber?: string
 }
 
-export function BuyTicketSection({ categories, currency, buttonLabel }: BuyTicketSectionProps) {
+export function BuyTicketSection({ categories, currency, buttonLabel, bankAccountName, bankAccountNumber }: BuyTicketSectionProps) {
+  const [copied, setCopied] = useState(false)
+
+  const handleCopyAccount = useCallback(() => {
+    if (bankAccountNumber) {
+      navigator.clipboard.writeText(bankAccountNumber).then(() => {
+        setCopied(true)
+        setTimeout(() => setCopied(false), 2000)
+      })
+    }
+  }, [bankAccountNumber])
+
   const [showPurchase, setShowPurchase] = useState(false)
   const [selectedCategory, setSelectedCategory] = useState(0)
   const [quantity, setQuantity] = useState(1)
@@ -218,6 +231,21 @@ export function BuyTicketSection({ categories, currency, buttonLabel }: BuyTicke
               {bankSlip ? bankSlip.name : '📎 Choose file...'}
             </label>
           </div>
+          {bankAccountName && bankAccountNumber && (
+            <div style={styles.bankInfoBox}>
+              <div style={styles.bankInfoRow}>
+                <span style={styles.bankInfoLabel}>Account Name</span>
+                <span style={styles.bankInfoValue}>{bankAccountName}</span>
+              </div>
+              <div style={styles.bankInfoRow}>
+                <span style={styles.bankInfoLabel}>Account Number</span>
+                <span style={styles.bankInfoValue}>{bankAccountNumber}</span>
+              </div>
+              <button type="button" style={styles.copyBtn} onClick={handleCopyAccount}>
+                {copied ? '✓ Copied!' : '📋 Copy Account Number'}
+              </button>
+            </div>
+          )}
           <p style={styles.hint}>Upload a screenshot or photo of your bank transfer receipt</p>
         </div>
 
@@ -460,5 +488,42 @@ const styles: Record<string, React.CSSProperties> = {
     fontSize: '18px',
     color: '#111827',
     fontWeight: '600',
+  },
+  bankInfoBox: {
+    background: '#00000005',
+    border: '1px solid #00000015',
+    borderRadius: '8px',
+    padding: '14px 16px',
+    display: 'flex',
+    flexDirection: 'column' as const,
+    gap: '8px',
+    marginBottom: '8px',
+  },
+  bankInfoRow: {
+    display: 'flex',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+  },
+  bankInfoLabel: {
+    fontSize: '12px',
+    color: '#64748b',
+    fontWeight: '500',
+  },
+  bankInfoValue: {
+    fontSize: '14px',
+    color: '#0f172a',
+    fontWeight: '600',
+  },
+  copyBtn: {
+    background: '#000000',
+    color: '#fff',
+    border: 'none',
+    padding: '8px 14px',
+    fontSize: '13px',
+    fontWeight: '600',
+    borderRadius: '6px',
+    cursor: 'pointer',
+    marginTop: '4px',
+    textAlign: 'center' as const,
   },
 }

@@ -73,5 +73,19 @@ export const HomePage: GlobalConfig = {
         description: 'Currency code (e.g. USD, EUR, PKR)',
       },
     },
+    {
+      name: 'bankAccountName',
+      type: 'text',
+      admin: {
+        description: 'Bank account holder name displayed to buyers',
+      },
+    },
+    {
+      name: 'bankAccountNumber',
+      type: 'text',
+      admin: {
+        description: 'Bank account number displayed to buyers for transfer',
+      },
+    },
   ],
 }

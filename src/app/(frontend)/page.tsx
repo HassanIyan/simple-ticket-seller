@@ -27,6 +27,8 @@ export default async function HomePage() {
   }[]
   const currency = homePage?.currency ?? 'USD'
   const buttonLabel = homePage?.ticketLabel ?? 'Buy Tickets'
+  const bankAccountName = (homePage as any)?.bankAccountName ?? ''
+  const bankAccountNumber = (homePage as any)?.bankAccountNumber ?? ''
 
   // Compute remaining tickets per category
   const categories = await Promise.all(
@@ -71,7 +73,13 @@ export default async function HomePage() {
         )}
 
         {categories.length > 0 && (
-          <BuyTicketSection categories={categories} currency={currency} buttonLabel={buttonLabel} />
+          <BuyTicketSection
+            categories={categories}
+            currency={currency}
+            buttonLabel={buttonLabel}
+            bankAccountName={bankAccountName}
+            bankAccountNumber={bankAccountNumber}
+          />
         )}
       </div>
     </div>
