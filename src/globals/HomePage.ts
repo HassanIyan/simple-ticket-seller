@@ -19,6 +19,15 @@ export const HomePage: GlobalConfig = {
       required: true,
     },
     {
+      name: 'ticketSellingEnabled',
+      type: 'checkbox',
+      defaultValue: true,
+      admin: {
+        description: 'Toggle ticket selling on or off',
+        position: 'sidebar',
+      },
+    },
+    {
       name: 'ticketCategories',
       type: 'array',
       required: true,

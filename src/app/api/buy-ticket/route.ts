@@ -23,6 +23,12 @@ export async function POST(req: NextRequest) {
 
     // Check ticket limit
     const homePage = await payload.findGlobal({ slug: 'home-page' })
+
+    // Check if ticket selling is enabled
+    if (!homePage.ticketSellingEnabled) {
+      return Response.json({ error: 'Ticket sales are currently closed' }, { status: 403 })
+    }
+
     const ticketCategories = (homePage.ticketCategories ?? []) as {
       name: string
       price: number

@@ -27,6 +27,7 @@ export default async function HomePage() {
   }[]
   const currency = homePage?.currency ?? 'USD'
   const buttonLabel = homePage?.ticketLabel ?? 'Buy Tickets'
+  const ticketSellingEnabled = homePage?.ticketSellingEnabled ?? false
   const bankAccountName = (homePage as any)?.bankAccountName ?? ''
   const bankAccountNumber = (homePage as any)?.bankAccountNumber ?? ''
 
@@ -79,6 +80,7 @@ export default async function HomePage() {
             buttonLabel={buttonLabel}
             bankAccountName={bankAccountName}
             bankAccountNumber={bankAccountNumber}
+            enabled={ticketSellingEnabled}
           />
         )}
       </div>

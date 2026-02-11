@@ -389,6 +389,10 @@ export interface HomePage {
     [k: string]: unknown;
   };
   /**
+   * Toggle ticket selling on or off
+   */
+  ticketSellingEnabled?: boolean | null;
+  /**
    * Add different ticket categories with their prices
    */
   ticketCategories: {
@@ -429,6 +433,7 @@ export interface HomePage {
 export interface HomePageSelect<T extends boolean = true> {
   featuredImage?: T;
   content?: T;
+  ticketSellingEnabled?: T;
   ticketCategories?:
     | T
     | {

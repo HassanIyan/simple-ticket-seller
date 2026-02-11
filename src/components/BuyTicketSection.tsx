@@ -13,9 +13,17 @@ interface BuyTicketSectionProps {
   buttonLabel: string
   bankAccountName?: string
   bankAccountNumber?: string
+  enabled?: boolean
 }
 
-export function BuyTicketSection({ categories, currency, buttonLabel, bankAccountName, bankAccountNumber }: BuyTicketSectionProps) {
+export function BuyTicketSection({
+  categories,
+  currency,
+  buttonLabel,
+  bankAccountName,
+  bankAccountNumber,
+  enabled = true,
+}: BuyTicketSectionProps) {
   const [copied, setCopied] = useState(false)
 
   const handleCopyAccount = useCallback(() => {
@@ -95,6 +103,13 @@ export function BuyTicketSection({ categories, currency, buttonLabel, bankAccoun
   }
 
   if (!showPurchase) {
+    if (!enabled) {
+      return (
+        <div style={styles.closedCard}>
+          <p style={styles.closedText}>Ticket sales are currently closed.</p>
+        </div>
+      )
+    }
     return (
       <button style={styles.buyBtn} onClick={() => setShowPurchase(true)}>
         {buttonLabel}
@@ -525,5 +540,21 @@ const styles: Record<string, React.CSSProperties> = {
     cursor: 'pointer',
     marginTop: '4px',
     textAlign: 'center' as const,
+  },
+  closedCard: {
+    textAlign: 'center' as const,
+    padding: '24px 32px',
+    background: '#f9fafb',
+    border: '1px solid #e5e7eb',
+    borderRadius: '12px',
+    marginTop: '24px',
+    maxWidth: '480px',
+    width: '100%',
+  },
+  closedText: {
+    margin: 0,
+    fontSize: '15px',
+    color: '#6b7280',
+    fontWeight: '500',
   },
 }
